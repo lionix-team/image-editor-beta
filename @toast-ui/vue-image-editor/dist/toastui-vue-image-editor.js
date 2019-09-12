@@ -18708,7 +18708,7 @@
                             hasRotatingPoint: false,
                             lockScalingY: false,
                             lockRotation: true,
-                            lockUniScaling: true
+                            lockUniScaling: true 
                         });
                         if (this._line.width > 1 || this._line.height > 1) {
                             this._triangle = new _fabric2.default.Triangle({

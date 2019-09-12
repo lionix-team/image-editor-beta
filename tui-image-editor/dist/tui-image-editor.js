@@ -6,11 +6,11 @@
  */
 (function webpackUniversalModuleDefinition(root, factory) {
     if (typeof exports === 'object' && typeof module === 'object')
-        module.exports = factory(require("image-editor-beta/tui-code-snippet"), require("image-editor-beta/fabric/dist/fabric.require"));
+        module.exports = factory(require("tui-code-snippet"), require("fabric/dist/fabric.require"));
     else if (typeof define === 'function' && define.amd)
-        define(["tui-code-snippet", "image-editor-beta/fabric/dist/fabric.require"], factory);
+        define(["tui-code-snippet", "fabric/dist/fabric.require"], factory);
     else if (typeof exports === 'object')
-        exports["ImageEditor"] = factory(require("image-editor-beta/tui-code-snippet"), require("image-editor-beta/fabric/dist/fabric.require"));
+        exports["ImageEditor"] = factory(require("tui-code-snippet"), require("fabric/dist/fabric.require"));
     else
         root["tui"] = root["tui"] || {}, root["tui"]["ImageEditor"] = factory((root["tui"] && root["tui"]["util"]), root["fabric"]);
 })(this, function (__WEBPACK_EXTERNAL_MODULE_3__, __WEBPACK_EXTERNAL_MODULE_106__) {
@@ -7568,7 +7568,7 @@
                             },
 
                             /**
-                             * Element에 cssClass속성을 제거하는 메서드
+                             * Elementì— cssClassì†ì„±ì„ ì œê±°í•˜ëŠ” ë©”ì„œë“œ
                              * Remove specific design class from HTML element.
                              * @param {HTMLElement} el target element
                              * @param {string} name class name to remove
@@ -7684,7 +7684,7 @@
                                 top = 0;
 
                                 if ((CSS_AUTO_REGEX.test(el.style.left) || CSS_AUTO_REGEX.test(el.style.top)) && 'getBoundingClientRect' in el) {
-                                    // 엘리먼트의 left또는 top이 'auto'일 때 수단
+                                    // ì—˜ë¦¬ë¨¼íŠ¸ì˜ leftë˜ëŠ” topì´ 'auto'ì¼ ë•Œ ìˆ˜ë‹¨
                                     bound = el.getBoundingClientRect();
 
                                     left = bound.left;
@@ -16179,6 +16179,7 @@
                 }, {
                     key: '_onObjectMoved',
                     value: function _onObjectMoved(fEvent) {
+                        console.log(fEvent)
                         var target = fEvent.target;
                         var pointer = this._canvas.getPointer(fEvent.e);
                         var params = this.createObjectProperties(target);
@@ -16211,33 +16212,58 @@
                                 }
                             }
                             var boundingRect = line.getBoundingRect();
+                            let k = line.strokeWidth / 2;
+                            let height = boundingRect.height;
+                            let width = boundingRect.width;
+                            let tg = height / width;
+                            let ctg = width / height;
+                            let ktg = k * (1 - tg) * line.scaleX
+                            let kctg = k * (1 - ctg) * line.scaleX
+                            let _left, _top;
                             if (line.x1 > line.x2) {
                                 if (line.y1 < line.y2) {
-                                    obj.set({
-                                        left: boundingRect.left,
-                                        top: boundingRect.top + boundingRect.height
-                                    });
+                                    console.log(3)
+                                    if (height < width) {
+                                        _left = boundingRect.left;
+                                        _top = boundingRect.top + boundingRect.height - ktg;
+                                    } else {
+                                        _left = boundingRect.left + kctg;
+                                        _top = boundingRect.top + boundingRect.height;
+                                    }
                                 } else {
-                                    obj.set({
-                                        left: boundingRect.left,
-                                        top: boundingRect.top
-                                    });
+                                    if (height < width) {
+                                        _left = boundingRect.left;
+                                        _top = boundingRect.top + ktg;
+                                    } else {
+                                        _left = boundingRect.left + kctg;
+                                        _top = boundingRect.top;
+                                    }
                                 }
                             } else {
-
                                 if (line.y1 < line.y2) {
-                                    obj.set({
-                                        left: boundingRect.left + boundingRect.width,
-                                        top: boundingRect.top + boundingRect.height
-                                    });
+                                    if (height < width) {
+                                        _left = boundingRect.left + boundingRect.width;
+                                        _top = boundingRect.top + boundingRect.height - ktg;
+                                    } else {
+                                        _left = boundingRect.left + boundingRect.width - kctg;
+                                        _top = boundingRect.top + boundingRect.height;
+                                    }
                                 } else {
-                                    obj.set({
-                                        left: boundingRect.left + boundingRect.width,
-                                        top: boundingRect.top
-                                    });
+                                    if (height < width) {
+                                        _left = boundingRect.left + boundingRect.width;
+                                        _top = boundingRect.top + ktg;
+                                    } else {
+                                        _left = boundingRect.left + boundingRect.width - kctg;
+                                        _top = boundingRect.top;
+                                    }
                                 }
                             }
+                            obj.set({
+                                left: _left,
+                                top: _top,
+                            });
                             obj.setCoords();
+                            // console.log(obj, 'slack', line)
                         }
                         this.fire(events.OBJECT_MOVED, params);
                     }
@@ -16291,10 +16317,58 @@
                                     coordsEnd.y -= 1;
                                 }
                             }
+
+                            var boundingRect = line.getBoundingRect();
+                            let k = line.strokeWidth / 2;
+                            let height = boundingRect.height;
+                            let width = boundingRect.width;
+                            let tg = height / width;
+                            let ctg = width / height;
+                            let ktg = k * (1 - tg) * line.scaleX
+                            let kctg = k * (1 - ctg) * line.scaleX
+                            let _left, _top;
+                            if (line.x1 > line.x2) {
+                                if (line.y1 < line.y2) {
+                                    console.log(3)
+                                    if (height < width) {
+                                        _left = boundingRect.left;
+                                        _top = boundingRect.top + boundingRect.height - ktg;
+                                    } else {
+                                        _left = boundingRect.left + kctg;
+                                        _top = boundingRect.top + boundingRect.height;
+                                    }
+                                } else {
+                                    if (height < width) {
+                                        _left = boundingRect.left;
+                                        _top = boundingRect.top + ktg;
+                                    } else {
+                                        _left = boundingRect.left + kctg;
+                                        _top = boundingRect.top;
+                                    }
+                                }
+                            } else {
+                                if (line.y1 < line.y2) {
+                                    if (height < width) {
+                                        _left = boundingRect.left + boundingRect.width;
+                                        _top = boundingRect.top + boundingRect.height - ktg;
+                                    } else {
+                                        _left = boundingRect.left + boundingRect.width - kctg;
+                                        _top = boundingRect.top + boundingRect.height;
+                                    }
+                                } else {
+                                    if (height < width) {
+                                        _left = boundingRect.left + boundingRect.width;
+                                        _top = boundingRect.top + ktg;
+                                    } else {
+                                        _left = boundingRect.left + boundingRect.width - kctg;
+                                        _top = boundingRect.top;
+                                    }
+                                }
+                            }
                             // console.log(line);
                             obj.set({
-                                left: params.left,
-                                top: target.y2,
+                                left: _left,
+                                top: _top,
                                 // width: 15 + target.scaleX,
                                 // height: 15 + target.scaleY,
                                 scaleY: target.scaleY,
@@ -17688,7 +17762,7 @@
                         brScalingSize = this._calcBottomRightScalingSizeFromPointer(pointerX, pointerY);
 
                     /*
-	         * @todo: 일반 객체에서 shift 조합키를 누르면 free size scaling이 됨 --> 확인해볼것
+	         * @todo: ì¼ë°˜ ê°ì²´ì—ì„œ shift ì¡°í•©í‚¤ë¥¼ ëˆ„ë¥´ë©´ free size scalingì´ ë¨ --> í™•ì¸í•´ë³¼ê²ƒ
 	         *      canvas.class.js // _scaleObject: function(...){...}
 	         */
                     return this._makeScalingSettings(tlScalingSize, brScalingSize);
@@ -18631,7 +18705,9 @@
                             type: "arrow_line",
                             // evented: false,
                             lockScalingX: false,
+                            hasRotatingPoint: false,
                             lockScalingY: false,
+                            lockRotation: true,
                             lockUniScaling: true
                         });
                         if (this._line.width > 1 || this._line.height > 1) {
@@ -18758,7 +18834,7 @@
                         // this.fire(eventNames.ADD_OBJECT, this.graphics.createObjectProperties(this._group));
                         // this.fire(eventNames.ADD_OBJECT,  this.graphics.createObjectProperties(this._group));
                         canvas.selection = false;
-                        canvas.forEachObject(function(o) {
+                        canvas.forEachObject(function (o) {
                             o.selectable = false;
                         });
                         this._line = null;
@@ -18906,7 +18982,7 @@
              * @extends {Component}
              * @ignore
              */
-            var lastSelected=true;
+            var lastSelected = true;
             var Text = function (_Component) {
                 _inherits(Text, _Component);
 
@@ -19117,7 +19193,7 @@
 
                             canvas.add(newText);
                             canvas.setActiveObject(newText);
-                            console.log(text.length);
+                            // console.log(text.length);
                             _fabric.IText.prototype.enterEditing(newText, canvas);
                             _fabric.IText.prototype.selectAll(text);
                             _this2.isPrevEditing = true;
@@ -19498,15 +19574,15 @@
                     key: '_onFabricMouseDown',
                     value: function _onFabricMouseDown(fEvent) {
                         var obj = fEvent.target;
-                        var selected=this.getSelectedObj();
+                        var selected = this.getSelectedObj();
                         // console.log(selected);
-                        console.log(selected.text);
-                        console.log(lastSelected);
-                        if(!selected.text || lastSelected===selected.__fe_id) {
+                        // console.log(selected.text);
+                        // console.log(lastSelected);
+                        if (!selected.text || lastSelected === selected.__fe_id) {
                             this._fireAddText(fEvent);
                         }
-                        lastSelected=selected.__fe_id;
-                        console.log('poxeci');
+                        lastSelected = selected.__fe_id;
+                        // console.log('poxeci');
                         // console.log('canvas',this.getCanvas());
 // console.log('down',obj);
                         // if (obj && !obj.isType('text')) {
